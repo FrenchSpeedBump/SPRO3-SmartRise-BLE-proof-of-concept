@@ -37,8 +37,6 @@ pico_sdk_init()
 
 add_executable(SmartRise_POC SmartRise_POC.cpp 
                 SmartRise.cpp
-                BleScanner.cpp
-                BleDevice.cpp
                 Beacon.cpp
 )
 
