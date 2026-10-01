@@ -30,14 +30,15 @@ static void packet_handler(uint8_t packetType, uint16_t channel, uint8_t *packet
         gap_advertisements_set_params( // how often and how we advertise
             0x0030,                    // minimum interval ~ 0.30ms
             0x0030,                    // maximum interval => very frequent
-            0,                         // Advertising type - Connectable undirected advertising
+            0x03,                         // Advertising type - 0=Connectable undirected advertising 0x03=
             0,                         // Address Type - 0 - Use public address.
             null_addr,                 // Target address - broadcast to everybody(no specific target)
             0x07,                      // Channel map(0b111) - use all 3 advertising channels
             0x00                       // Filter Policy - Accept everyone
         );
         
-        static const uint8_t adv_data[] =//packet the phone sees
+        //simple ble
+        static const uint8_t adv_data2[] =//packet the phone sees
         {
             0x02, BLUETOOTH_DATA_TYPE_FLAGS, 0x06, // 2 bytes follow 1 byte type 1 byte value , Flags field, 0x06 ~ Generally discoverable and BLE only
 
@@ -45,6 +46,38 @@ static void packet_handler(uint8_t packetType, uint16_t channel, uint8_t *packet
             'S', 'm', 'a', 'r', 't', 'R', 'i', 's', 'e'
         };
 
+        //ibeacon
+        static const uint8_t adv_data[] =
+        {
+            // Flags
+            0x02,BLUETOOTH_DATA_TYPE_FLAGS,0x06,
+
+            // Manufacturer Specific Data
+            0x1A,BLUETOOTH_DATA_TYPE_MANUFACTURER_SPECIFIC_DATA,
+
+            // Apple Company ID (0x004C)
+            0x4C, 0x00,
+
+            // iBeacon Type
+            0x02,
+            0x15,
+
+            // UUID
+            0x12,0x34,0x56,0x78,
+            0x12,0x34,
+            0x56,0x78,
+            0x12,0x34,
+            0x56,0x78,0x9A,0xBC,0xDE,0xF0,
+
+            // Major
+            0x00,0x01,
+
+            // Minor
+            0x00,0x01,
+
+            // Measured Power
+            0xC5
+        };
         gap_advertisements_set_data(sizeof(adv_data), (uint8_t *)adv_data); // supplying advertisment data ~ this is what we advertise
 
         gap_advertisements_enable(1); // enable advertising
